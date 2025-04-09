@@ -48,7 +48,14 @@ jobs:
           pulumi stack init ${{ inputs.stackName }}
           pulumi config set --path aws:assumeRole.roleArn ${{ secrets.AWS_ASSUME_ROLE }}
           pulumi config set aws:region ${{ secrets.AWS_REGION }}
-      - uses: pulumi/actions@v6
-        with:
-          command: ${{ inputs.command }}
-          stack-name: ${{ inputs.stackName }}
+      - name: Perform preview action
+        if: ${{ inputs.action == 'preview' }}
+        run: pulumi preview
+
+      - name: Perform run action
+        if: ${{ inputs.action == 'run' }}
+        run: pulumi run -y
+
+      - name: Perform delete action
+        if: ${{ inputs.action == 'delete' }}
+        run: pulumi delete -y
