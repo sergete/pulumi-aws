@@ -41,6 +41,9 @@ jobs:
       - name: Login to Pulumi (local)
         run: | 
           pulumi login -l
+      - name: Stack Config
+        run: | 
+          pulumi stack select ${{ inputs.stackName }}
           pulumi config set --path aws:assumeRole.roleArn ${{ secrets.AWS_ASSUME_ROLE }}
           pulumi config set aws:region ${{ secrets.AWS_REGION }}
       - uses: pulumi/actions@v6
