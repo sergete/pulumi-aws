@@ -9,7 +9,7 @@ on:
         default: 'preview'
         type: choice
         options:
-          - run
+          - up
           - preview
           - delete 
       stackName:
@@ -52,8 +52,8 @@ jobs:
         run: pulumi preview
 
       - name: Perform run command
-        if: ${{ inputs.command == 'run' }}
-        run: pulumi run -y
+        if: ${{ inputs.command == 'up' }}
+        run: pulumi up -y
 
       - name: Perform delete command
         if: ${{ inputs.command == 'delete' }}
