@@ -36,6 +36,7 @@ The Lambda function is directly linked to the SQS queue through an `EventSourceM
 ## Deployment instructions
 
 The deployment is managed through a GitHub Actions workflow using Pulumi. It is triggered manually via the GitHub UI using `workflow_dispatch`.
+If you do not have access to this repository you can clone it and set up in your repository all the variables and secrets needed to run this workflow.
 
 ### Required repository secrets
 
