@@ -2,6 +2,10 @@
 This project defines the infrastructure using Pulumi and AWS. 
 Below is a description of the deployed architecture.
 
+## Architecture design
+
+![Architecture](/repo_images/architecture.png)
+
 ---
 
 ## Architecture description
@@ -28,4 +32,43 @@ The Lambda function uses a role with permissions to execute, access S3, and proc
 The Lambda function is directly linked to the SQS queue through an `EventSourceMapping`, allowing it to automatically process messages from the queue.
 
 ---
+
+## Deployment instructions
+
+The deployment is managed through a GitHub Actions workflow using Pulumi. It is triggered manually via the GitHub UI using `workflow_dispatch`.
+
+### Required repository secrets
+
+To allow the GitHub Actions workflow to deploy the infrastructure, the following repository secrets must be configured:
+
+- `AWS_ACCESS_KEY_ID` – Access key ID for your AWS IAM user or role.
+- `AWS_SECRET_ACCESS_KEY` – Secret access key for your AWS IAM user or role.
+- `AWS_REGION` – AWS region to deploy the infrastructure (e.g., `eu-west-1`).
+- `AWS_ASSUME_ROLE` – ARN of the IAM role to assume during the deployment process.
+
+### Workflow inputs
+
+When triggering the workflow manually, you must provide the following inputs:
+
+- `command` – Action to perform. Available options:
+  - `preview` (default): Shows a preview of the changes Pulumi would apply.
+  - `run`: Applies the infrastructure changes.
+  - `delete`: Destroys the deployed resources.
+
+- `stackName` – Name of the Pulumi stack to use. Currently supported:
+  - `dev`
+
+The workflow handles installation, authentication, configuration, and execution of Pulumi commands according to the selected action.
+
+---
+
+## Technical Decisions
+
+Altough technical challenge task description talks about creating S3 events to execute Lambda functions i decided that it wasn´t the best choice for this type of solution.
+i am searching for something that can give us more than an lambda execution, for realtime data we need something **robust**, 
+that provide **fault tolerance** and ensure **retry attempts**.
+
+
+
+
 
