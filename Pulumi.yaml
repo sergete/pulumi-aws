@@ -1,0 +1,11 @@
+name: "AWS-Code"
+description: "Code test for company xFarm"
+runtime:
+  name: python
+  options:
+    toolchain: pip
+    virtualenv: venv
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: "aws-python"

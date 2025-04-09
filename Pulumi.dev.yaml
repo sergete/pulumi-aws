@@ -1,0 +1,7 @@
+# no passphrase needed
+encryptionsalt: "v1:7iOulrTmHns=:v1:cnwxfwdA43vzdA/N:0v5UOpO0YCUqPMHbG6B6ZWcRrkGhew=="
+config:
+  aws:region: "eu-west-1"
+  aws:assumeRole:
+    roleArn: "arn:aws:iam::<YOUR AWS ACCOUNT>:role/terraform-iac-role"
+  aws:profile: "<YOUR PROFILE NAME>"
