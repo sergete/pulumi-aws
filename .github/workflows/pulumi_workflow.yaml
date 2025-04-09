@@ -22,7 +22,7 @@ on:
 
 jobs:
   perform:
-    name: Action ${{ inputs.action }}
+    name: Action ${{ inputs.command }}
     runs-on: ubuntu-latest
     env:
       PULUMI_CONFIG_PASSPHRASE: ""
@@ -48,14 +48,14 @@ jobs:
           pulumi stack init ${{ inputs.stackName }}
           pulumi config set --path aws:assumeRole.roleArn ${{ secrets.AWS_ASSUME_ROLE }}
           pulumi config set aws:region ${{ secrets.AWS_REGION }}
-      - name: Perform preview action
-        if: ${{ inputs.action == 'preview' }}
+      - name: Perform preview command
+        if: ${{ inputs.command == 'preview' }}
         run: pulumi preview
 
-      - name: Perform run action
-        if: ${{ inputs.action == 'run' }}
+      - name: Perform run command
+        if: ${{ inputs.command == 'run' }}
         run: pulumi run -y
 
-      - name: Perform delete action
-        if: ${{ inputs.action == 'delete' }}
+      - name: Perform delete command
+        if: ${{ inputs.command == 'delete' }}
         run: pulumi delete -y
