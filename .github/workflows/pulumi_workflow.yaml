@@ -1,0 +1,46 @@
+name: Manual Workflow with Choice Input
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: 'Choose an command to perform'
+        required: true
+        default: 'preview'
+        type: choice
+        options:
+          - run
+          - preview
+          - delete 
+      stackName:
+        description: 'Choose an existing stack name'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+
+jobs:
+  perform:
+    name: Action ${{ inputs.action }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
+          role-session-name: PulumiSession
+      - run: pip install -r requirements.txt
+      - name: Login to Pulumi (local)
+        run: pulumi login -l
+      - uses: pulumi/actions@v6
+        with:
+          command: ${{ inputs.command }}
+          stack-name: ${{ inputs.stackName }}
