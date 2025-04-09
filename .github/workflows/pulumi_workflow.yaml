@@ -24,6 +24,8 @@ jobs:
   perform:
     name: Action ${{ inputs.action }}
     runs-on: ubuntu-latest
+    env:
+      PULUMI_CONFIG_PASSPHRASE: ""
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
