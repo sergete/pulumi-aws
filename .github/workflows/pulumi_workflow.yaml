@@ -45,7 +45,8 @@ jobs:
           pulumi login "${{ secrets.AWS_S3_BACKEND }}/${{ inputs.stackName }}"
       - name: Stack Config
         run: | 
-          pulumi stack init ${{ inputs.stackName }}
+          # select stack if fails then init stack
+          pulumi stack select ${{ inputs.stackName }} || pulumi stack init ${{ inputs.stackName }}
           pulumi config set aws:region ${{ secrets.AWS_REGION }}
       - name: Perform preview command
         if: ${{ inputs.command == 'preview' }}
