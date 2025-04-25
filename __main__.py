@@ -7,21 +7,23 @@ import shutil
 
 # Bucket S3
 bucket = aws.s3.BucketV2(
-    "bucket",
+    resource_name="bucket",
     bucket="xfarm-bucket-01",
     force_destroy=True
 )
 
 # Main Queue
 main_queue = aws.sqs.Queue(
-    "xFarmMainQueue",
+    resource_name="main_queue",
+    name="xFarmMainQueue",
     message_retention_seconds=345600, # 4 days
     receive_wait_time_seconds=10
 )
 
 # Dead Letter SQS
 dead_letter_sqs = aws.sqs.Queue(
-    "xFarmDeadLetterSqs",
+    resource_name="dead_letter_sqs",
+    name="xFarmDeadLetterSqs",
     message_retention_seconds=1209600 , # 14 days
     redrive_allow_policy=pulumi.Output.json_dumps({
         "redrivePermission": "byQueue",
@@ -31,7 +33,8 @@ dead_letter_sqs = aws.sqs.Queue(
 )
 
 # Main Queue Redrive
-main_queue_redrive_policy = aws.sqs.RedrivePolicy("main_queue",
+main_queue_redrive_policy = aws.sqs.RedrivePolicy(
+    resource_name="main_queue",
     queue_url=main_queue.id,
     redrive_policy=pulumi.Output.json_dumps({
         "deadLetterTargetArn": dead_letter_sqs.arn,
@@ -40,7 +43,7 @@ main_queue_redrive_policy = aws.sqs.RedrivePolicy("main_queue",
 
 # Main Queue Policy
 queue_policy = aws.sqs.QueuePolicy(
-    "xFarmQueuePolicy",
+    resource_name="main_queue_policy",
     queue_url=main_queue.url,
     policy=pulumi.Output.all(main_queue.arn, bucket.arn).apply(lambda args: {
         "Version": "2012-10-17",
@@ -62,7 +65,7 @@ queue_policy = aws.sqs.QueuePolicy(
 
 # S3 notifications
 notification = aws.s3.BucketNotification(
-    "xFarmBucketNotification",
+    resource_name="bucket_notification",
     bucket=bucket.id,
     queues=[{
         "queue_arn": main_queue.arn,
@@ -74,7 +77,8 @@ notification = aws.s3.BucketNotification(
 
 # Lambda Role
 lambda_role = aws.iam.Role(
-    "xFarmLambdaRole",
+    resource_name="lambda_role",
+    name="xFarmLambdaRole",
     assume_role_policy=json.dumps({
         "Version": "2012-10-17",
         "Statement": [{
@@ -105,7 +109,8 @@ shutil.make_archive("lambda_function", "zip", "./lambda_code/", "lambda_function
 
 # Create lambda function
 lambda_func = aws.lambda_.Function(
-    "xFarmLambdaFunction",
+    resource_name="lambda_function",
+    name="xFarmLambdaFunction",
     runtime=aws.lambda_.Runtime.PYTHON3D12,
     handler="lambda_function.handler",
     code=pulumi.FileArchive("lambda_function.zip"),
@@ -118,7 +123,7 @@ lambda_func = aws.lambda_.Function(
 )
 
 event_source_mapping = aws.lambda_.EventSourceMapping(
-    "xFarmEventSourceMapping",
+    resource_name="event_source_mapping",
     event_source_arn=main_queue.arn,
     function_name=lambda_func.name
 )
