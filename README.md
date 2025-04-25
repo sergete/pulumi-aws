@@ -46,6 +46,7 @@ To allow the GitHub Actions workflow to deploy the infrastructure, the following
 - `AWS_SECRET_ACCESS_KEY` – Secret access key for your AWS IAM user or role.
 - `AWS_REGION` – AWS region to deploy the infrastructure (e.g., `eu-west-1`).
 - `AWS_ASSUME_ROLE` – ARN of the IAM role to assume during the deployment process.
+- `AWS_S3_BACKEND` – URI of the S3 Bucket where stack state will be stored.
 
 ### Workflow inputs
 
