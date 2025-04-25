@@ -40,7 +40,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ASSUME_ROLE }}
           role-session-name: PulumiSession
       - run: pip install -r requirements.txt
-      - name: Login to Pulumi (local)
+      - name: Pulumi Login
         run: | 
           pulumi login "${{ secrets.AWS_S3_BACKEND }}/${{ inputs.stackName }}"
       - name: Stack Config
@@ -52,10 +52,6 @@ jobs:
         if: ${{ inputs.command == 'preview' }}
         run: pulumi preview
 
-      - name: Perform run command
-        if: ${{ inputs.command == 'up' }}
-        run: pulumi up -y
-
-      - name: Perform delete command
-        if: ${{ inputs.command == 'delete' }}
-        run: pulumi delete -y
+      - name: Perform ${{ inputs.command }} command
+        if: ${{ inputs.command != 'preview' }}
+        run: pulumi ${{ inputs.command }} -y
